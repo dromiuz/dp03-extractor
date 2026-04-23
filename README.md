@@ -22,15 +22,6 @@ Status: beta, but already useful for real recovery and archive workflows.
 - Detect inserted DP-03 cards on macOS and Windows
 - Optionally audition / rough-mix extracted tracks with the built-in mixer
 
-## What it is not
-
-- Not a DAW replacement
-- Not an official Tascam utility
-- Not a writer/editor for DP-03 cards
-- Not a guarantee that every unknown card or firmware variant is fully supported yet
-
-The goal is safe read-first extraction.
-
 ## Supported workflow
 
 Best path today:
@@ -42,6 +33,15 @@ Best path today:
 5. Open those WAVs in any DAW
 
 Important: do recovery work from a card image or a copy whenever possible.
+
+## What it is not
+
+- Not a DAW replacement
+- Not an official Tascam utility
+- Not a writer/editor for DP-03 cards
+- Not a guarantee that every unknown card or firmware variant is fully supported yet
+
+The goal is safe read-first extraction.
 
 ## Project structure
 
