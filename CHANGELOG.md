@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.1
+
+Bug fixes and first-launch polish for the public release.
+
+Fixes:
+- Mixer window no longer crashes on open with `TclError: invalid command name "9"`. The `ChannelMeter` widget was shadowing `tkinter.Widget._w` (Tk's reserved widget-path attribute) with its pixel width, which broke every subsequent canvas call and left the mixer half-rendered. Renamed the internal attributes to `_px_w` / `_px_h`.
+- The "audio unavailable" dialog now shows an install command that targets the actual running Python interpreter (`sys.executable`) instead of a hard-coded `python3.12` path. On macOS Homebrew Pythons it includes `--break-system-packages` so the copy-pasted command actually works under PEP 668.
+- Mixer build failures are now caught and surfaced in an error dialog (with a traceback appended to `dp03-debug.log` in the project root) instead of silently leaving a blank window.
+
+Docs:
+- README: added screenshots at the top and a macOS note about Homebrew Python 3.14 shipping without Tk — use python.org Python 3.12 on macOS until that's resolved upstream.
+
 ## 0.1.0
 
 Initial public GitHub release of DP-03 Extractor.

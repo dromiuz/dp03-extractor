@@ -6,6 +6,14 @@ This project exists for one reason: DP-03 owners keep ending up with songs trapp
 
 Status: beta, but already useful for real recovery and archive workflows.
 
+## Screenshots
+
+![Mixer with waveform panel and live level meters](docs/screenshots/mixer.png)
+*Live mixer — scrub the waveform, solo/mute tracks, watch per-channel peaks and master clip.*
+
+![Project list](docs/screenshots/projects.png)
+*Project browser — every recoverable song on the card, at a glance.*
+
 ## What it does
 
 - Scan a DP-03 / DP-03SD full-card image and list projects
@@ -59,6 +67,13 @@ If your default Python does not have a working Tk build, use:
 ```bash
 ./Launch\ DP-03\ Extractor.command
 ```
+
+> **macOS Python note.** Homebrew's `python@3.14` currently ships without Tk
+> (`_tkinter`), so the app won't launch against it. If you see
+> `ModuleNotFoundError: No module named '_tkinter'`, install Python **3.12**
+> from [python.org](https://www.python.org/downloads/macos/) and run the app
+> with that interpreter instead (`python3.12 -m dp03app`). This is an
+> upstream Homebrew packaging issue, not the app.
 
 ### Windows
 

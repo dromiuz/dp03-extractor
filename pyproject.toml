@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dp03-extractor"
-version = "0.1.0"
+version = "0.1.1"
 description = "GUI and CLI tools for safely scanning and extracting audio from Tascam DP-03 / DP-03SD card images."
 readme = "README.md"
 requires-python = ">=3.10"
