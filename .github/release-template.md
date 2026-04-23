@@ -7,7 +7,7 @@ Initial public beta release of DP-03 Extractor.
 - CLI backend for listing song slots, inspecting projects, and exporting WAVs
 - macOS and Windows card-detection helpers
 - Optional rough-mix / audition workflow
-- Included reverse-engineering notes and format documentation
+- Included technical format notes for extending extractor support
 
 ### Recommended workflow
 1. Make a raw image of the card first
@@ -24,10 +24,11 @@ Initial public beta release of DP-03 Extractor.
 - Windows standalone zip built from `dist/DP-03 Extractor/`
 
 ### Current limitations
-- Beta support status: not every unknown card / firmware variant is guaranteed yet
+- Beta support status: not every unknown card or firmware variant is guaranteed yet
 - Some CLI flows still use `shared/dp03/projects_catalog.csv` from a source checkout or source archive
 - Direct raw-disk reads on Windows require Administrator privileges
 - Real-image validation fixtures are intentionally not committed to the repo
+- Windows standalone zip will be added after real hardware smoke testing
 
 ### Feedback
 If a card fails to scan or extraction looks wrong, please open an issue and include:

@@ -195,16 +195,12 @@ python3 -m dp03extract --help
 
 ## Reverse-engineering notes
 
-This repository also contains the working notes used to decode the DP-03 hidden storage format:
+This repository includes selected technical notes used to decode the DP-03 hidden storage format:
 
 - `shared/dp03/notes/FORMAT_SPEC.md`
 - `shared/dp03/notes/AUDIO_LAYOUT.md`
-- `PLAN.md`
-- `HERMES_BRIEF.md`
-- `OPENCLAW_BRIEF.md`
-- `SKILL.md`
 
-Those documents are useful if you want to understand how the extractor was derived or help extend support.
+Those documents are useful if you want to understand how the extractor works or help extend support.
 
 ## Contributing
 

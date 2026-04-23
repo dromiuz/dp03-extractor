@@ -50,5 +50,12 @@ dist/
 /shared/dp03/notes/.tmp*
 /shared/dp03/notes/CLAUDE_CODE_MORNING_HANDOFF.md
 
+# Keep private planning / agent coordination docs out of the public repo
+/PLAN.md
+/HERMES_BRIEF.md
+/OPENCLAW_BRIEF.md
+/SKILL.md
+/shared/dp03/notes/phase3_checklist.md
+
 # Local debug output
 /dp03-debug.log
