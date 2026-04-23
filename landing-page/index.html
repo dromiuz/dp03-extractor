@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tascam Project Utility</title>
+  <meta name="description" content="A desktop utility for inspecting Tascam Portastudio projects, seeing what's really on the card, and extracting usable WAVs." />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --soft: #21262d;
+      --text: #e6edf3;
+      --muted: #9da7b3;
+      --line: #30363d;
+      --accent: #6ea8fe;
+      --accent-2: #9ecbff;
+      --good: #7ee787;
+      --max: 1080px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #0d1117 0%, #111827 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(13, 17, 23, 0.82);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+    }
+
+    .hero {
+      padding: 88px 0 56px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-2);
+      background: rgba(110, 168, 254, 0.12);
+      border: 1px solid rgba(110, 168, 254, 0.22);
+      border-radius: 999px;
+      padding: 8px 12px;
+      margin-bottom: 18px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.1;
+      margin: 0 0 16px;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 5vw, 4.8rem);
+      max-width: 820px;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      letter-spacing: -0.03em;
+    }
+
+    .lede {
+      max-width: 760px;
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #08111f;
+    }
+
+    .hero-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .panel {
+      background: rgba(22, 27, 34, 0.88);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+
+    .mock {
+      margin-top: 32px;
+      overflow: hidden;
+    }
+
+    .mock-top {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 18px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #39414c;
+    }
+
+    .mock-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 18px;
+    }
+
+    .sidebar, .mainpane {
+      background: var(--soft);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .mini-title {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .project-list, .track-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .project-item, .track-item {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .project-item strong, .track-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.98rem;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .track-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .good {
+      color: var(--good);
+      font-weight: 600;
+    }
+
+    section {
+      padding: 26px 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: rgba(22, 27, 34, 0.82);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    ul.clean {
+      padding-left: 18px;
+      margin: 12px 0 0;
+      color: var(--muted);
+    }
+
+    .steps .card {
+      position: relative;
+      padding-top: 52px;
+    }
+
+    .step-num {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(110, 168, 254, 0.16);
+      color: var(--accent-2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(110,168,254,0.22);
+    }
+
+    details {
+      background: rgba(22, 27, 34, 0.82);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+
+    details + details {
+      margin-top: 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    details p {
+      color: var(--muted);
+      margin: 12px 0 0;
+    }
+
+    .footer {
+      padding: 40px 0 60px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 860px) {
+      .mock-grid, .grid-2, .grid-3, .track-list {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 64px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <div class="brand">Tascam Project Utility</div>
+      <nav class="nav-links">
+        <a href="#how-it-works">How it works</a>
+        <a href="#who-its-for">Who it’s for</a>
+        <a href="#faq">FAQ</a>
+        <a href="#download">Download</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="eyebrow">Desktop utility for Tascam Portastudio users</div>
+        <h1>See what’s really on your Tascam projects.</h1>
+        <p class="lede">
+          A simple desktop tool for people who can hear the song on the recorder, but still can’t tell what’s actually on the card, which tracks matter, or how to get clean WAVs out without guessing.
+        </p>
+        <div class="cta-row">
+          <a class="button primary" href="#download">Get the app</a>
+          <a class="button" href="#how-it-works">See how it works</a>
+        </div>
+        <div class="hero-note">Works offline. Built for real Tascam project pain. Not a DAW.</div>
+
+        <div class="panel mock" aria-label="Product preview">
+          <div class="mock-top">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <div class="mock-grid">
+            <aside class="sidebar">
+              <div class="mini-title">Projects</div>
+              <div class="project-list">
+                <div class="project-item">
+                  <strong>SONG116</strong>
+                  <div class="meta">2 tracks • clean extraction found</div>
+                </div>
+                <div class="project-item">
+                  <strong>SONG141</strong>
+                  <div class="meta">2 tracks • older archive session</div>
+                </div>
+                <div class="project-item">
+                  <strong>SONG214</strong>
+                  <div class="meta">2 tracks • card import complete</div>
+                </div>
+              </div>
+            </aside>
+            <section class="mainpane">
+              <div class="mini-title">Current project</div>
+              <div class="track-list">
+                <div class="track-item">
+                  <strong>Track 1</strong>
+                  <div class="meta">Child master 0xD940</div>
+                  <div class="good">Ready to export WAV</div>
+                </div>
+                <div class="track-item">
+                  <strong>Track 2</strong>
+                  <div class="meta">Child master 0x9D00</div>
+                  <div class="good">Ready to export WAV</div>
+                </div>
+                <div class="track-item">
+                  <strong>Output</strong>
+                  <div class="meta">/Exports/SONG116/Track1.wav</div>
+                </div>
+                <div class="track-item">
+                  <strong>Status</strong>
+                  <div class="meta">Project inspected safely before export</div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap grid-2">
+        <div class="card">
+          <h2>The recorder captured the song. The confusion came later.</h2>
+          <p class="meta">
+            Tascam Portastudios are great for getting ideas down. The harder part is what happens after months or years of saved sessions.
+          </p>
+        </div>
+        <div class="card">
+          <ul class="clean">
+            <li>You know the song is on the card, but the files don’t make sense.</li>
+            <li>You’re not sure what’s safe to touch.</li>
+            <li>Older projects start to feel risky.</li>
+            <li>You want normal WAVs out without menu-diving and guesswork.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="steps">
+      <div class="wrap">
+        <h2>Open the project. Inspect it clearly. Extract the tracks.</h2>
+        <p class="lede">Minimal on purpose. Just the parts people actually need.</p>
+        <div class="grid-3">
+          <div class="card">
+            <div class="step-num">1</div>
+            <h3>Load a Tascam project or image</h3>
+            <p class="meta">Start with the card or project source and get a desktop view of what’s actually there.</p>
+          </div>
+          <div class="card">
+            <div class="step-num">2</div>
+            <h3>Inspect tracks safely</h3>
+            <p class="meta">See project structure, track entries, and what looks usable before exporting anything.</p>
+          </div>
+          <div class="card">
+            <div class="step-num">3</div>
+            <h3>Export usable WAVs</h3>
+            <p class="meta">Pull tracks out into normal WAV files so you can archive them or bring them into a DAW.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="who-its-for">
+      <div class="wrap grid-2">
+        <div class="card">
+          <h2>Who it’s for</h2>
+          <ul class="clean">
+            <li>Tascam Portastudio users with old SD-card projects</li>
+            <li>People with years of half-finished songs</li>
+            <li>Home recordists who want safer desktop visibility</li>
+            <li>Anyone tired of guessing what’s really on the card</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>What it isn’t</h2>
+          <ul class="clean">
+            <li>Not a DAW</li>
+            <li>Not mastering software</li>
+            <li>Not cloud collaboration</li>
+            <li>Not a replacement for the recorder itself</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap card">
+        <h2>Why I built it</h2>
+        <p class="meta">
+          The recording part was fine. The project-management part wasn’t. I wanted a desktop tool that made Tascam sessions clearer, safer, and easier to extract without pretending to be a full music-production environment.
+        </p>
+      </div>
+    </section>
+
+    <section id="download">
+      <div class="wrap grid-2">
+        <div class="card">
+          <h2>Download</h2>
+          <p class="meta">Replace these placeholders with your real build links.</p>
+          <div class="cta-row">
+            <a class="button primary" href="#">Download for macOS</a>
+            <a class="button" href="#">Download for Windows</a>
+          </div>
+          <p class="meta">Version 1.0 • One-time purchase • Offline desktop app</p>
+        </div>
+        <div class="card">
+          <h2>Quick promise</h2>
+          <ul class="clean">
+            <li>Clearer project visibility</li>
+            <li>Track extraction to normal WAVs</li>
+            <li>Less archive anxiety</li>
+            <li>No bloated workflow language</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>FAQ</h2>
+        <details>
+          <summary>Does this replace my Tascam recorder?</summary>
+          <p>No. Your recorder still does the recording. This app is the desktop utility layer around your projects.</p>
+        </details>
+        <details>
+          <summary>Does it work offline?</summary>
+          <p>Yes. The normal use case is local and offline.</p>
+        </details>
+        <details>
+          <summary>Is it a DAW?</summary>
+          <p>No. It’s a focused utility for inspecting Tascam project data and exporting usable audio.</p>
+        </details>
+        <details>
+          <summary>Is it safe for old projects?</summary>
+          <p>It’s designed to help you inspect projects before acting on them, but you should still keep backups of important cards and images.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      Tascam Project Utility • Minimal landing page draft • Replace placeholder download links, version info, and mock preview with real screenshots when ready.
+    </div>
+  </footer>
+</body>
+</html>

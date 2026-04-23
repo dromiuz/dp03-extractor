@@ -1,0 +1,54 @@
+# macOS / Windows noise
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+.venv-release/
+venv/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# Local app bundles / generated launch products
+/DP-03 Extractor.app/
+
+# Reverse-engineering / validation artifacts that should not ship in the GitHub repo
+/clean_songs/
+/cid_ranges/
+/shared/dp03/images/*.img
+!/shared/dp03/images/.gitkeep
+!/shared/dp03/images/checksums.txt
+/shared/dp03/extracted/
+/shared/dp03/extracted_runs/
+/shared/dp03/outputs/
+/shared/dp03/reference_exports/
+/shared/dp03/*.wav
+/shared/dp03/**/*.wav
+/shared/dp03/probe_*
+/shared/dp03/*.out
+/shared/dp03/extract_song116_final.py
+/shared/dp03/code/
+/shared/dp03/notes/lab_log.md
+/shared/dp03/notes/.tmp*
+/shared/dp03/notes/CLAUDE_CODE_MORNING_HANDOFF.md
+
+# Local debug output
+/dp03-debug.log

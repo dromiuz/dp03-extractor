@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dp03-extractor"
+version = "0.1.0"
+description = "GUI and CLI tools for safely scanning and extracting audio from Tascam DP-03 / DP-03SD card images."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Zachary McIntyre" }
+]
+keywords = ["tascam", "dp-03", "dp03", "portastudio", "audio", "forensics", "extractor"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Win32 (MS Windows)",
+  "Environment :: MacOS X",
+  "Intended Audience :: End Users/Desktop",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Sound/Audio",
+  "Topic :: Utilities"
+]
+dependencies = []
+
+[project.optional-dependencies]
+mixer = [
+  "numpy>=1.24",
+  "sounddevice>=0.4.6"
+]
+dev = [
+  "build>=1.2.2",
+  "pyinstaller>=6.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/dromiuz/dp03-extractor"
+Issues = "https://github.com/dromiuz/dp03-extractor/issues"
+Releases = "https://github.com/dromiuz/dp03-extractor/releases"
+
+[project.scripts]
+dp03extract = "dp03extract.cli:main"
+
+[project.gui-scripts]
+dp03app = "dp03app.app:main"
+
+[tool.setuptools.packages.find]
+include = ["dp03app*", "dp03extract*"]
+exclude = ["tests*", "shared*", "landing-page*", "packaging*"]

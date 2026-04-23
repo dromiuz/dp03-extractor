@@ -1,0 +1,7 @@
+# Runtime dependencies for DP-03 Extractor.
+#
+# The core extractor only needs the standard library and Tkinter (bundled
+# with the official python.org installer). The two entries below are only
+# required for the optional live mixer and "Render mix" features.
+numpy>=1.24
+sounddevice>=0.4.6
